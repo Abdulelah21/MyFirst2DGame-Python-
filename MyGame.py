@@ -20,6 +20,8 @@ snail_rect = snail_surface.get_rect(bottomright = (600,300))
 
 player_surf = pygame.image.load('graphiks/player/player_walk_1.png').convert_alpha()
 player_rect = player_surf.get_rect(midbottom = (80,300))
+player_gravity = 0 
+
 
 while True:
     for event in pygame.event.get():
@@ -27,8 +29,16 @@ while True:
             pygame.quit()
             exit()
             #adding mouse events
-        #if event.type == pygame.MOUSEMOTION:
-            #if player_rect.collidepoint(event.pos): print('collision')
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if player_rect.collidepoint(event.pos): 
+                player_gravity = -20
+
+        #player input
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+               player_gravity = -20
+
+        
 
     #draw all our elements
     screen.blit(sky_surface,(0,0)) #it taik (name,postion)
@@ -40,14 +50,13 @@ while True:
     snail_rect.x -= 5
     if snail_rect.right <= 0: snail_rect.left = 800
     screen.blit(snail_surface,snail_rect)
+
+    #Player
+    player_gravity += 1
+    player_rect.y += player_gravity
     screen.blit(player_surf,player_rect)
 
-    #if event.type == pygame.MOUSEMOTION:
-    #  if player_rect.collidepoint(event.pos): print('collision')
 
-    mouse_pos = pygame.mouse.get_pos()
-    if player_rect.collidepoint(mouse_pos):
-        print(pygame.mouse.get_pressed())
 
     #update everything 
     pygame.display.update() 
