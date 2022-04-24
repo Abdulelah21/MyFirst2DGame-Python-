@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint
 
 def display_score():
     current_time = int(pygame.time.get_ticks() / 1000) - start_time
@@ -7,6 +8,16 @@ def display_score():
     score_rect = score_surf.get_rect(center = (400,50))
     screen.blit(score_surf,score_rect)
     return current_time
+
+def obstacle_movement(obstacle_list):
+    if obstacle_list:
+        for obstacle_rect in obstacle_list:
+            obstacle_rect.x -= 5
+            
+            screen.blit(snail_surf,obstacle_rect)
+
+        return obstacle_list
+    else: return []  
 
 pygame.init()
 screen = pygame.display.set_mode((800,400))
@@ -24,9 +35,11 @@ ground_surface = pygame.image.load('graphiks/ground.png').convert()
 #score_surf = test_font.render('My First game',False,(64,64,64))# it take (text informtion,anti-aliase,color)
 #score_rect = score_surf.get_rect(center = (400,50))
 
-snail_surface = pygame.image.load('graphiks/snail/snail1.png').convert_alpha()
-snail_rect = snail_surface.get_rect(bottomright = (600,300))
+#Obstacles
+snail_surf = pygame.image.load('graphiks/snail/snail1.png').convert_alpha()
+snail_rect = snail_surf.get_rect(bottomright = (600,300))
 
+obstacle_rect_list = []
 
 player_surf = pygame.image.load('graphiks/player/player_walk_1.png').convert_alpha()
 player_rect = player_surf.get_rect(midbottom = (80,300))
@@ -42,6 +55,10 @@ game_name_rect = game_name.get_rect(center = (400,80))
 
 game_message = test_font.render('Press space to run ',False,(111,196,169))
 game_message_rect = game_message.get_rect(center =(400,320))
+
+#Timer 
+obstacle_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(obstacle_timer,1000)
 
 while True:
     for event in pygame.event.get():
@@ -67,6 +84,8 @@ while True:
                 snail_rect.left = 800  
                 start_time = int(pygame.time.get_ticks() / 1000)                          
 
+        if event.type == obstacle_timer and game_active:
+            obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900,1100),300)))
         
     if game_active:
         #draw all our elements
@@ -77,15 +96,19 @@ while True:
         #screen.blit(score_surf,score_rect)
         score = display_score()
 
-        snail_rect.x -= 5
-        if snail_rect.right <= 0: snail_rect.left = 800
-        screen.blit(snail_surface,snail_rect)
+        #snail_rect.x -= 5
+        #if snail_rect.right <= 0: snail_rect.left = 800
+        #screen.blit(snail_surf,snail_rect)
 
         #Player
         player_gravity += 1
         player_rect.y += player_gravity
         if player_rect.bottom >= 300: player_rect.bottom = 300
         screen.blit(player_surf,player_rect)
+
+        #Obstalcol movement
+        obstacle_rect_list =  obstacle_movement(obstacle_rect_list)
+
 
         #collision  
         if snail_rect.colliderect(player_rect):
