@@ -51,6 +51,9 @@ test_font = pygame.font.Font('font/Pixeltype.ttf',50)# it take (type , size)
 game_active = False
 start_time = 0
 score = 0 
+bg_music = pygame.mixer.Sound('audion/Juhani Junkala [Retro Game Music Pack] Level 3.wav')
+bg_music.play(loops = -1)
+bg_music.set_volume(0.1)
 
 #elements surfaces
 sky_surface = pygame.image.load('graphiks/Sky.png').convert()
@@ -79,6 +82,8 @@ player_walk2 = pygame.image.load('graphiks/player/player_walk_2.png').convert_al
 player_walk = [player_walk1,player_walk2]
 player_index = 0 
 player_jump = pygame.image.load('graphiks/player/jump.png').convert_alpha()
+player_jump_sound = pygame.mixer.Sound('audion/audio_jump.mp3')
+player_jump_sound.set_volume(0.5)
 
 player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom = (80,300))
@@ -117,12 +122,14 @@ while True:
                 if player_rect.bottom >= 300:
                     if player_rect.collidepoint(event.pos): 
                         player_gravity = -20
+                        player_jump_sound.play()
 
             #player input
             if event.type == pygame.KEYDOWN:
                 if player_rect.bottom >= 300:
                     if event.key == pygame.K_SPACE:
                         player_gravity = -20
+                        player_jump_sound.play()
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
